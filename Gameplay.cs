@@ -81,6 +81,7 @@ public class Gameplay : MonoBehaviour
 
             pokeRawImage.texture = DownloadHandlerTexture.GetContent(pokemonSpriteRequest);
             pokeRawImage.texture.filterMode = FilterMode.Point;
+            pokeRawImage.color = Color.black;
 
             pokemonNameText.text = CapitalizeFirstLetter(pokemonName);
             pokemonAbilityText.text = "Ability: " + CapitalizeFirstLetter(pokemonAbilityNames[0]);
@@ -99,6 +100,6 @@ public class Gameplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+       
     }
 }
