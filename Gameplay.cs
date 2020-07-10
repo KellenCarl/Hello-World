@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO; 
 using UnityEngine;
 using UnityEngine.Networking;
 using SimpleJSON;
@@ -8,35 +9,40 @@ using TMPro;
 
 
 public class Gameplay : MonoBehaviour
+
 {
-    public RawImage pokeRawImage;  //creating UI Elements
+
+    public RawImage pokeRawImage; //creating UI Elements
     public TextMeshProUGUI playerScoreText, PotentialRoundScoreText, pokemonNameText;
     public TextMeshProUGUI hint1Button, hint2Button, revealPokemonButton, playerGuessTextBox;
     public TextMeshProUGUI pokemonAbilityText, pokemonTypeText;
 
     private readonly string basePokeURL = "https://pokeapi.co/api/v2/";
 
-
     // Start is called before the first frame update
+
     void Start()
+
     {
+
         pokeRawImage.texture = Texture2D.blackTexture;
         playerScoreText.text = "0";
         PotentialRoundScoreText.text = "1000";
         pokemonNameText.text = "";
         pokemonAbilityText.text = "";
         pokemonTypeText.text = "";
-                       
+
         int randomPokeIndex = Random.Range(1, 808); // Pick Random Pokemon id. Min: inclusive, Max Exclusive
+
         StartCoroutine(GetPokemonAtIndex(randomPokeIndex));
 
         // Get Pokemon Info from Pokemon API
+
         IEnumerator GetPokemonAtIndex(int pokemonIndex)
+
         {
             string PokemonURL = basePokeURL + "pokemon/" + pokemonIndex.ToString();
-
             UnityWebRequest pokeInfoRequest = UnityWebRequest.Get(PokemonURL);
-
             yield return pokeInfoRequest.SendWebRequest();
 
             if (pokeInfoRequest.isNetworkError || pokeInfoRequest.isHttpError)
@@ -44,9 +50,8 @@ public class Gameplay : MonoBehaviour
                 Debug.LogError(pokeInfoRequest.error);
                 yield break;
             }
-            
-            JSONNode pokeInfo = JSON.Parse(pokeInfoRequest.downloadHandler.text);
 
+            JSONNode pokeInfo = JSON.Parse(pokeInfoRequest.downloadHandler.text);
             string pokemonName = pokeInfo["name"];
             string pokemonSpriteURL = pokeInfo["sprites"]["front_default"];
 
@@ -66,11 +71,8 @@ public class Gameplay : MonoBehaviour
                 pokemonAbilityNames[j] = pokemonAbilities[i]["ability"]["name"];
             }
 
-
             // Get Pokemon Sprite
-
             UnityWebRequest pokemonSpriteRequest = UnityWebRequestTexture.GetTexture(pokemonSpriteURL);
-
             yield return pokemonSpriteRequest.SendWebRequest();
 
             if (pokemonSpriteRequest.isNetworkError || pokemonSpriteRequest.isHttpError)
@@ -79,15 +81,18 @@ public class Gameplay : MonoBehaviour
                 yield break;
             }
 
-            pokeRawImage.texture = DownloadHandlerTexture.GetContent(pokemonSpriteRequest);
-            pokeRawImage.texture.filterMode = FilterMode.Point;
-            pokeRawImage.color = Color.black;
+            Texture2D pokeOriginalImage = DownloadHandlerTexture.GetContent(pokemonSpriteRequest);
+            byte[] pokeOriginalBytes = pokeOriginalImage.EncodeToPNG();
+            File.WriteAllBytes(@"C:\Users\gohan\New Unity Project\Assets\Images\Pokemon Sprites\" + randomPokeIndex + ".png", pokeOriginalBytes);
 
+            pokeRawImage.texture = pokeOriginalImage;
+            pokeRawImage.texture.filterMode = FilterMode.Point;
+                        
+            pokeRawImage.color = Color.black;
+                    
             pokemonNameText.text = CapitalizeFirstLetter(pokemonName);
             pokemonAbilityText.text = "Ability: " + CapitalizeFirstLetter(pokemonAbilityNames[0]);
             pokemonTypeText.text = "Type: " + CapitalizeFirstLetter(pokemonTypeNames[0]);
-
-
         }
 
         string CapitalizeFirstLetter(string str)
@@ -100,6 +105,7 @@ public class Gameplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+        
     }
+
 }
