@@ -87,9 +87,11 @@ public class Gameplay : MonoBehaviour
 
             pokeRawImage.texture = pokeOriginalImage;
             pokeRawImage.texture.filterMode = FilterMode.Point;
-                        
-            pokeRawImage.color = Color.black;
-                    
+
+            pokeRawImage.material.SetColor("_Color", Color.black);
+            
+
+
             pokemonNameText.text = CapitalizeFirstLetter(pokemonName);
             pokemonAbilityText.text = "Ability: " + CapitalizeFirstLetter(pokemonAbilityNames[0]);
             pokemonTypeText.text = "Type: " + CapitalizeFirstLetter(pokemonTypeNames[0]);
@@ -105,7 +107,8 @@ public class Gameplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+        pokeRawImage.material.SetColor("_Color", Color.white);
     }
 
 }
