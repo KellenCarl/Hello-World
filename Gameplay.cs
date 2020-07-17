@@ -16,6 +16,11 @@ public class Gameplay : MonoBehaviour
     public TextMeshProUGUI playerScoreText, PotentialRoundScoreText, pokemonNameText;
     public TextMeshProUGUI hint1Button, hint2Button, revealPokemonButton, playerGuessTextBox;
     public TextMeshProUGUI pokemonAbilityText, pokemonTypeText;
+    bool pokemonRevealed = false;
+    string pokemonType = "", pokemonAbility = "", g_pokemonName = "";
+    
+
+
 
     private readonly string basePokeURL = "https://pokeapi.co/api/v2/";
 
@@ -25,12 +30,13 @@ public class Gameplay : MonoBehaviour
 
     {
 
-        pokeRawImage.texture = Texture2D.blackTexture;
-        playerScoreText.text = "0";
+        pokeRawImage.texture = Texture2D.blackTexture;  // set initial Pokemon Sprite Spot as blank canvas spot
+        playerScoreText.text = "0";   // setting all interface displays equal to initial values (most of them blank until revealed)
         PotentialRoundScoreText.text = "1000";
         pokemonNameText.text = "";
         pokemonAbilityText.text = "";
         pokemonTypeText.text = "";
+
 
         int randomPokeIndex = Random.Range(1, 808); // Pick Random Pokemon id. Min: inclusive, Max Exclusive
 
@@ -87,28 +93,77 @@ public class Gameplay : MonoBehaviour
 
             pokeRawImage.texture = pokeOriginalImage;
             pokeRawImage.texture.filterMode = FilterMode.Point;
+            pokeRawImage.material.SetColor("_Color", Color.black); // set silhouette for Pokemon Guess
 
-            pokeRawImage.material.SetColor("_Color", Color.black);
-            
+            string CapitalizeFirstLetter(string str)  //method for Capitalizing First letter in string name
+            {
+                return char.ToUpper(str[0]) + str.Substring(1);
+            }
 
-
-            pokemonNameText.text = CapitalizeFirstLetter(pokemonName);
-            pokemonAbilityText.text = "Ability: " + CapitalizeFirstLetter(pokemonAbilityNames[0]);
-            pokemonTypeText.text = "Type: " + CapitalizeFirstLetter(pokemonTypeNames[0]);
+            g_pokemonName = CapitalizeFirstLetter(pokemonName);
+            pokemonAbility = "Ability: " + CapitalizeFirstLetter(pokemonAbilityNames[0]);
+            pokemonType = "Type: " + CapitalizeFirstLetter(pokemonTypeNames[0]);
         }
 
-        string CapitalizeFirstLetter(string str)
-        {
-            return char.ToUpper(str[0]) + str.Substring(1);
-        }
+        
 
+    }
+
+    public void OnButtonNextPokemon()
+    {
+        RevealName();
+    }
+
+    private void RevealName()
+    {
+        pokemonNameText.text = g_pokemonName;
+    }
+
+    public void OnButtonHint1()
+    {
+        PotentialRoundScoreText.text = "750";
+        RevealHint1();
+    }
+
+    private void RevealHint1()
+    {
+        pokemonTypeText.text = pokemonType;
+
+    }
+
+    public void OnButtonHint2()
+    {
+        PotentialRoundScoreText.text = "500";
+        RevealHint2();
+    }
+
+    private void RevealHint2()
+    {
+        pokemonAbilityText.text = pokemonAbility;
+    }
+
+
+    public void OnButtonRevealPokemon()
+    {
+        PotentialRoundScoreText.text = "250";
+        
+        RevealPokemon();
+    }
+
+    private void RevealPokemon()
+    {
+        pokemonRevealed = true;
+        pokeRawImage.material.SetColor("_Color", Color.white);
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+        
+        
 
-        pokeRawImage.material.SetColor("_Color", Color.white);
+
     }
 
 }
