@@ -14,10 +14,13 @@ public class Gameplay : MonoBehaviour
 
     public RawImage pokeRawImage; //creating UI Elements
     public TextMeshProUGUI playerScoreText, PotentialRoundScoreText, pokemonNameText;
-    public TextMeshProUGUI hint1Button, hint2Button, revealPokemonButton, playerGuessTextBox;
+    public TextMeshProUGUI hint1Button, hint2Button, revealPokemonButton;
+    public InputField playerGuessTextBox;
     public TextMeshProUGUI pokemonAbilityText, pokemonTypeText;
     bool pokemonRevealed = false;
     string pokemonType = "", pokemonAbility = "", g_pokemonName = "";
+    string playerGuess = "";
+    int guessCount = 0;
     
 
 
@@ -109,6 +112,22 @@ public class Gameplay : MonoBehaviour
 
     }
 
+    public void OnEnterTextBox()
+    {
+        playerGuess = playerGuessTextBox.text;
+
+        if (playerGuess == g_pokemonName)
+        {
+            playerScoreText.text = PotentialRoundScoreText.text;  
+        }
+
+        else
+        {
+            guessCount = guessCount + 1;
+        }
+
+    }
+
     public void OnButtonNextPokemon()
     {
         RevealName();
@@ -159,9 +178,6 @@ public class Gameplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        
-        
 
 
     }
