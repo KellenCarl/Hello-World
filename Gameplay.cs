@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using SimpleJSON;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 
@@ -20,6 +21,7 @@ public class Gameplay : MonoBehaviour
     bool pokemonRevealed = false;
     bool hint1Revealed = false;
     bool hint2Revealed = false;
+    bool correctGuess = false;
     string pokemonType = "", pokemonAbility = "", g_pokemonName = "";
     string playerGuess = "";
     int playerscoreNum = 0;
@@ -36,10 +38,10 @@ public class Gameplay : MonoBehaviour
     void Start()
 
     {
-
+        PlayerPrefLoad();
         pokeRawImage.texture = Texture2D.blackTexture;  // set initial Pokemon Sprite Spot as blank canvas spot
-        playerScoreText.text = "0";   // setting all interface displays equal to initial values (most of them blank until revealed)
-        PotentialRoundScoreText.text = "1000";
+        playerScoreText.text = "" + playerscoreNum;   // setting all interface displays equal to initial values (most of them blank until revealed)
+        PotentialRoundScoreText.text = "" + potentialroundscoreNum;
         pokemonNameText.text = "";
         pokemonAbilityText.text = "";
         pokemonTypeText.text = "";
@@ -120,10 +122,13 @@ public class Gameplay : MonoBehaviour
     {
         playerGuess = playerGuessTextBox.text;
 
-        if (playerGuess == g_pokemonName)
+        if (playerGuess == g_pokemonName && correctGuess == false)
         {
-            playerScoreText.text = PotentialRoundScoreText.text;
+            playerscoreNum += potentialroundscoreNum;
+            playerScoreText.text = "" + playerscoreNum;
             RevealName();
+            correctGuess = true;
+
         }
 
         
@@ -133,11 +138,14 @@ public class Gameplay : MonoBehaviour
     public void OnButtonNextPokemon()
     {
         RevealName();
+        PlayerPrefs.SetInt("Score", playerscoreNum);
+        LoadNextLevel();
     }
 
     private void RevealName()
     {
         pokemonNameText.text = g_pokemonName;
+        
     }
 
     public void OnButtonHint1()
@@ -193,10 +201,25 @@ public class Gameplay : MonoBehaviour
         pokeRawImage.material.SetColor("_Color", Color.white);
     }
 
+    public void PlayerPrefLoad()
+    {
+        playerscoreNum = PlayerPrefs.GetInt("Score");
+        
+    }
+
+    public void LoadNextLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetKey("escape"))
+        {
+            PlayerPrefs.SetInt("Score", 0);
+            Application.Quit();
+        }
 
     }
 
