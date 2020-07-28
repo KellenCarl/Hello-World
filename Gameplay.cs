@@ -18,10 +18,14 @@ public class Gameplay : MonoBehaviour
     public InputField playerGuessTextBox;
     public TextMeshProUGUI pokemonAbilityText, pokemonTypeText;
     bool pokemonRevealed = false;
+    bool hint1Revealed = false;
+    bool hint2Revealed = false;
     string pokemonType = "", pokemonAbility = "", g_pokemonName = "";
     string playerGuess = "";
-    int guessCount = 0;
+    int playerscoreNum = 0;
+    int potentialroundscoreNum = 1000;
     
+        
 
 
 
@@ -118,13 +122,11 @@ public class Gameplay : MonoBehaviour
 
         if (playerGuess == g_pokemonName)
         {
-            playerScoreText.text = PotentialRoundScoreText.text;  
+            playerScoreText.text = PotentialRoundScoreText.text;
+            RevealName();
         }
 
-        else
-        {
-            guessCount = guessCount + 1;
-        }
+        
 
     }
 
@@ -140,8 +142,14 @@ public class Gameplay : MonoBehaviour
 
     public void OnButtonHint1()
     {
-        PotentialRoundScoreText.text = "750";
-        RevealHint1();
+       if (hint1Revealed == false)
+        {
+            potentialroundscoreNum = potentialroundscoreNum - 200;
+            PotentialRoundScoreText.text = "" + potentialroundscoreNum;
+            RevealHint1();
+            hint1Revealed = true;
+        }
+        
     }
 
     private void RevealHint1()
@@ -152,8 +160,13 @@ public class Gameplay : MonoBehaviour
 
     public void OnButtonHint2()
     {
-        PotentialRoundScoreText.text = "500";
-        RevealHint2();
+        if (hint2Revealed == false)
+        {
+            potentialroundscoreNum = potentialroundscoreNum - 200;
+            PotentialRoundScoreText.text = "" + potentialroundscoreNum;
+            RevealHint2();
+            hint2Revealed = true;
+        }
     }
 
     private void RevealHint2()
@@ -164,9 +177,14 @@ public class Gameplay : MonoBehaviour
 
     public void OnButtonRevealPokemon()
     {
-        PotentialRoundScoreText.text = "250";
+        if (pokemonRevealed == false)
+        {
+            potentialroundscoreNum = potentialroundscoreNum - 500;
+            PotentialRoundScoreText.text = "" + potentialroundscoreNum;
+            RevealPokemon();
+            pokemonRevealed = true;
+        }
         
-        RevealPokemon();
     }
 
     private void RevealPokemon()
