@@ -98,7 +98,7 @@ public class Gameplay : MonoBehaviour
 
             Texture2D pokeOriginalImage = DownloadHandlerTexture.GetContent(pokemonSpriteRequest);
             byte[] pokeOriginalBytes = pokeOriginalImage.EncodeToPNG();
-            File.WriteAllBytes(@"C:\Users\gohan\New Unity Project\Assets\Images\Pokemon Sprites\" + randomPokeIndex + ".png", pokeOriginalBytes);
+            File.WriteAllBytes(@"C:\Users\gohan\WhosThatPoekmon\Assets\Images\Pokemon Sprites\" + randomPokeIndex + ".png", pokeOriginalBytes);
 
             pokeRawImage.texture = pokeOriginalImage;
             pokeRawImage.texture.filterMode = FilterMode.Point;
