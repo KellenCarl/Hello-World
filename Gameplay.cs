@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.IO; 
 using UnityEngine;
 using UnityEngine.Networking;
@@ -22,6 +23,7 @@ public class Gameplay : MonoBehaviour
     bool hint1Revealed = false;
     bool hint2Revealed = false;
     bool correctGuess = false;
+    bool nextButtonClicked = false;
     string pokemonType = "", pokemonAbility = "", g_pokemonName = "";
     string playerGuess = "";
     int playerscoreNum = 0;
@@ -140,18 +142,9 @@ public class Gameplay : MonoBehaviour
     public void OnButtonNextPokemon()
     {
         RevealName();
-        PlayerPrefs.SetInt("Score", playerscoreNum);
-        SetHighScore();
-        roundsRemaining = (roundsRemaining - 1);
-        PlayerPrefs.SetInt("Rounds Remaining", roundsRemaining);
-        if (roundsRemaining == 0)
-        {
-            LoadMenu();
-        }
-        else
-        {
-            LoadNextPokemon();
-        }
+        nextButtonClicked = true;
+        RevealPokemon();
+
     }
 
     private void RevealName()
@@ -222,11 +215,13 @@ public class Gameplay : MonoBehaviour
 
     public void LoadNextPokemon()
     {
+        
         SceneManager.LoadScene(1);
     }
 
     public void LoadMenu()
     {
+        
         SceneManager.LoadScene(0);
     }
 
@@ -243,9 +238,41 @@ public class Gameplay : MonoBehaviour
 
     }
 
+
+    IEnumerator AdvancetoNextScene()
+
+    {
+        yield return new WaitForSeconds(2);
+        PlayerPrefs.SetInt("Score", playerscoreNum);
+        SetHighScore();
+        roundsRemaining = (roundsRemaining - 1);
+        PlayerPrefs.SetInt("Rounds Remaining", roundsRemaining);
+        if (roundsRemaining == 0)
+        {
+            LoadMenu();
+        }
+        else
+        {
+            LoadNextPokemon();
+        }
+
+    }
+
+
+
     // Update is called once per frame
     void Update()
     {
+
+        if (nextButtonClicked == true)
+        {
+             StartCoroutine(AdvancetoNextScene());
+           
+        }
+
+
+
+
         if (Input.GetKey("escape"))
         {
             PlayerPrefs.SetInt("Score", 0);
