@@ -26,6 +26,8 @@ public class Gameplay : MonoBehaviour
     string playerGuess = "";
     int playerscoreNum = 0;
     int potentialroundscoreNum = 1000;
+    int roundsRemaining = 0;
+    int highScore = 0;
     
         
 
@@ -98,7 +100,7 @@ public class Gameplay : MonoBehaviour
 
             Texture2D pokeOriginalImage = DownloadHandlerTexture.GetContent(pokemonSpriteRequest);
             byte[] pokeOriginalBytes = pokeOriginalImage.EncodeToPNG();
-            File.WriteAllBytes(@"C:\Users\gohan\WhosThatPoekmon\Assets\Images\Pokemon Sprites\" + randomPokeIndex + ".png", pokeOriginalBytes);
+            // comment out to write to file.  File.WriteAllBytes(@"C:\Users\gohan\WhosThatPokemon\Assets\Images\Pokemon Sprites\" + randomPokeIndex + ".png", pokeOriginalBytes);
 
             pokeRawImage.texture = pokeOriginalImage;
             pokeRawImage.texture.filterMode = FilterMode.Point;
@@ -139,7 +141,17 @@ public class Gameplay : MonoBehaviour
     {
         RevealName();
         PlayerPrefs.SetInt("Score", playerscoreNum);
-        LoadNextLevel();
+        SetHighScore();
+        roundsRemaining = (roundsRemaining - 1);
+        PlayerPrefs.SetInt("Rounds Remaining", roundsRemaining);
+        if (roundsRemaining == 0)
+        {
+            LoadMenu();
+        }
+        else
+        {
+            LoadNextPokemon();
+        }
     }
 
     private void RevealName()
@@ -204,12 +216,31 @@ public class Gameplay : MonoBehaviour
     public void PlayerPrefLoad()
     {
         playerscoreNum = PlayerPrefs.GetInt("Score");
+        roundsRemaining = PlayerPrefs.GetInt("Rounds Remaining");
         
     }
 
-    public void LoadNextLevel()
+    public void LoadNextPokemon()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(1);
+    }
+
+    public void LoadMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    private void SetHighScore()
+    {
+        if (PlayerPrefs.HasKey("High Score"))
+        {
+            highScore = PlayerPrefs.GetInt("High Score");
+        }
+        if (playerscoreNum > highScore)
+        {
+            PlayerPrefs.SetInt("High Score", playerscoreNum);
+        }
+
     }
 
     // Update is called once per frame
@@ -220,6 +251,7 @@ public class Gameplay : MonoBehaviour
             PlayerPrefs.SetInt("Score", 0);
             Application.Quit();
         }
+
 
     }
 
