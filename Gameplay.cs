@@ -24,6 +24,7 @@ public class Gameplay : MonoBehaviour
     bool hint2Revealed = false;
     bool correctGuess = false;
     bool nextButtonClicked = false;
+    bool nameRevealed = false;
     string pokemonType = "", pokemonAbility = "", g_pokemonName = "";
     string playerGuess = "";
     int playerscoreNum = 0;
@@ -141,15 +142,22 @@ public class Gameplay : MonoBehaviour
 
     public void OnButtonNextPokemon()
     {
+        
         RevealName();
         nextButtonClicked = true;
         RevealPokemon();
+        PlayerPrefs.SetInt("Score", playerscoreNum);
+        SetHighScore();
+        roundsRemaining = (roundsRemaining - 1);
+        PlayerPrefs.SetInt("Rounds Remaining", roundsRemaining);
 
     }
 
     private void RevealName()
     {
         pokemonNameText.text = g_pokemonName;
+        PotentialRoundScoreText.text = "0";
+        nameRevealed = true;
         
     }
 
@@ -242,11 +250,13 @@ public class Gameplay : MonoBehaviour
     IEnumerator AdvancetoNextScene()
 
     {
-        yield return new WaitForSeconds(2);
-        PlayerPrefs.SetInt("Score", playerscoreNum);
-        SetHighScore();
-        roundsRemaining = (roundsRemaining - 1);
-        PlayerPrefs.SetInt("Rounds Remaining", roundsRemaining);
+        if (correctGuess == false)
+
+        { yield return new WaitForSeconds(2);
+        }
+        
+           
+        
         if (roundsRemaining == 0)
         {
             LoadMenu();
